@@ -1,0 +1,157 @@
+====================TAXONOMIA COMPLETA====================
+
+SELECT
+  r.nombre_cientifico   AS reino,
+  d.nombre_cientifico   AS division,
+  c.nombre_cientifico   AS clase,
+  o.nombre_cientifico   AS orden,
+  f.nombre_cientifico   AS familia,
+  g.nombre_cientifico   AS genero,
+  e.nombre_cientifico   AS especie,
+
+  -- Características de división (se incluyen sólo las no NULL)
+  CONCAT_WS(', ',
+    CASE WHEN d.vasculares    IS NOT NULL THEN CONCAT('vasculares=', d.vasculares) END,
+    CASE WHEN d.con_semilla   IS NOT NULL THEN CONCAT('con_semilla=', d.con_semilla) END,
+    CASE WHEN d.con_flor      IS NOT NULL THEN CONCAT('con_flor=', d.con_flor) END,
+    CASE WHEN d.con_fruto     IS NOT NULL THEN CONCAT('con_fruto=', d.con_fruto) END
+  ) AS division_caracteristicas,
+
+  -- Características de clase (sólo no NULL)
+  CONCAT_WS(', ',
+    CASE WHEN c.n_cotiledones    IS NOT NULL THEN CONCAT('n_cotiledones=', c.n_cotiledones) END,
+    CASE WHEN c.n_flores         IS NOT NULL THEN CONCAT('n_flores=', c.n_flores) END,
+    CASE WHEN c.venacion_hojas   IS NOT NULL THEN CONCAT('venacion_hojas=', c.venacion_hojas) END,
+    CASE WHEN c.raiz             IS NOT NULL THEN CONCAT('raiz=', c.raiz) END,
+    CASE WHEN c.tallo            IS NOT NULL THEN CONCAT('tallo=', c.tallo) END,
+    CASE WHEN c.tiene_esporangio IS NOT NULL THEN CONCAT('tiene_esporangio=', c.tiene_esporangio) END
+  ) AS clase_caracteristicas,
+
+  -- Características de orden
+  CONCAT_WS(', ',
+    CASE WHEN o.`disposición_floral` IS NOT NULL THEN CONCAT('disposición_floral=', o.`disposición_floral`) END,
+    CASE WHEN o.inflorescencia       IS NOT NULL THEN CONCAT('inflorescencia=', o.inflorescencia) END,
+    CASE WHEN o.posicion_ovario     IS NOT NULL THEN CONCAT('posicion_ovario=', o.posicion_ovario) END
+  ) AS orden_caracteristicas,
+
+  -- Características de familia
+  CONCAT_WS(', ',
+    CASE WHEN f.tipo_fruto    IS NOT NULL THEN CONCAT('tipo_fruto=', f.tipo_fruto) END,
+    CASE WHEN f.tipo_semilla  IS NOT NULL THEN CONCAT('tipo_semilla=', f.tipo_semilla) END,
+    CASE WHEN f.tipo_estipula IS NOT NULL THEN CONCAT('tipo_estipula=', f.tipo_estipula) END
+  ) AS familia_caracteristicas,
+
+  -- Descripciones (si existen)
+  NULLIF(g.descripcion, '') AS genero_descripcion,
+  NULLIF(e.descripcion, '') AS especie_descripcion
+
+FROM especie e
+JOIN genero   g ON e.genero_id   = g.id
+JOIN familia  f ON g.familia_id  = f.id
+JOIN orden    o ON f.orden_id    = o.id
+JOIN clase    c ON o.clase_id    = c.id
+JOIN division d ON c.division_id = d.id
+JOIN reino    r ON d.reino_id    = r.id
+
+WHERE e.nombre_cientifico = 'Acer_Capillipes';
+
+--Salida
+Plantae
+Magnoliophyta
+Magnoliopsida
+Sapindales
+Sapindaceae
+Acer
+Acer_Capillipes
+vasculares=1, con_semilla=1, con_flor=1, con_fruto...
+n_cotiledones=2, venacion_hojas=reticulada, raiz=P...
+Género de árboles y arbustos conocidos por sus hoj...
+Especie del género 
+
+================================================================================
+
+
+
+====================TAXONOMIA SIMPLE===========================================
+
+SELECT
+  r.nombre_cientifico AS reino,
+  d.nombre_cientifico AS division,
+  c.nombre_cientifico AS clase,
+  o.nombre_cientifico AS orden,
+  f.nombre_cientifico AS familia,
+  g.nombre_cientifico AS genero,
+  e.nombre_cientifico AS especie
+FROM especie e
+JOIN genero   g ON e.genero_id   = g.id
+JOIN familia  f ON g.familia_id  = f.id
+JOIN orden    o ON f.orden_id    = o.id
+JOIN clase    c ON o.clase_id    = c.id
+JOIN division d ON c.division_id = d.id
+JOIN reino    r ON d.reino_id    = r.id
+WHERE e.nombre_cientifico = 'Acer_Capillipes';
+
+--Salida
+Plantae
+Magnoliophyta
+Magnoliopsida
+Sapindales
+Sapindaceae
+Acer
+Acer_Capillipes
+
+
+================================================================================
+
+
+
+
+==========================TAXONOMIA SIMPLE + CARACTERISTICAS====================
+
+SELECT
+  CONCAT_WS(' > ',
+    r.nombre_cientifico,
+    d.nombre_cientifico,
+    c.nombre_cientifico,
+    o.nombre_cientifico,
+    f.nombre_cientifico,
+    g.nombre_cientifico,
+    e.nombre_cientifico
+  ) AS taxonomia,                       -- todo en un solo campo
+
+  -- Campos de la región vinculada
+  reg.nombre            AS region_nombre,
+  reg.clima             AS region_clima,
+  reg.altitud           AS region_altitud,
+  reg.topografia        AS region_topografia,
+  reg.descripcion       AS region_descripcion,
+
+  -- Campos del descubrimiento vinculado
+  disc.descubridor      AS descubridor,
+  disc.fecha            AS fecha_descubrimiento
+
+FROM especie e
+JOIN genero   g ON e.genero_id   = g.id
+JOIN familia  f ON g.familia_id  = f.id
+JOIN orden    o ON f.orden_id    = o.id
+JOIN clase    c ON o.clase_id    = c.id
+JOIN division d ON c.division_id = d.id
+JOIN reino    r ON d.reino_id    = r.id
+
+LEFT JOIN region        reg ON e.region_id = reg.id
+LEFT JOIN descubrimiento disc ON e.descubrimiento_id = disc.id
+
+WHERE e.nombre_cientifico = 'Acer_Capillipes';
+
+---Salida
+Plantae > Magnoliophyta > Magnoliopsida > Sapindal...
+Bosque templado caducifolio
+templado
+500-1500
+colina
+Bosques con árboles que pierden sus hojas en otoño...
+Karl Maximovich (Maxim.)
+1867-11-13
+
+================================================================================
+

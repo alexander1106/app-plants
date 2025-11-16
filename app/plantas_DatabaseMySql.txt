@@ -1,0 +1,143 @@
+Create DATABASE plantas;
+
+use plantas;
+
+-- -------------------------
+-- TAXONOMIA
+-- -------------------------
+CREATE TABLE reino (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_cientifico VARCHAR(150) NOT NULL UNIQUE,
+  nombre VARCHAR(150),
+  descripcion TEXT
+);
+
+CREATE TABLE division (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_cientifico VARCHAR(150) NOT NULL UNIQUE,
+  nombre VARCHAR(150),
+  descripcion TEXT,
+  vasculares boolean,
+  con_semilla boolean,
+  con_flor boolean,
+  con_fruto boolean,
+  reino_id INT NOT NULL,
+  FOREIGN KEY (reino_id) REFERENCES reino(id)
+) ;
+
+CREATE TABLE clase (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_cientifico VARCHAR(150) NOT NULL UNIQUE,
+  nombre VARCHAR(150),
+  descripcion TEXT,
+  n_cotiledones int(4),
+  n_flores int(4),
+  venacion_hojas ENUM('abierta', 'cerrada', 'reticulada', 'paralela', 'dicotómica') NULL,
+  raiz ENUM('Pivotante', 'fasciculada') NULL,
+  tallo ENUM('herbaceo', 'leñoso', 'semileñoso') NULL, 
+  tiene_esporangio boolean,
+  division_id INT NOT NULL,
+  FOREIGN KEY (division_id) REFERENCES division(id)
+);
+
+CREATE TABLE orden (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_cientifico VARCHAR(150) NOT NULL UNIQUE,
+  nombre VARCHAR(150),
+  descripcion TEXT,
+  disposición_floral ENUM('espiralada', 'verticilada ', 'asimetrica', 'zigomorfa') NULL, 
+  inflorescencia ENUM('racimosas', 'cimosas', 'mixtas') NULL,
+  posicion_ovario ENUM('supero', 'infero', 'semiinfero') NULL,
+  clase_id INT NOT NULL,
+  FOREIGN KEY (clase_id) REFERENCES clase(id)
+);
+
+CREATE TABLE familia (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_cientifico VARCHAR(150) NOT NULL UNIQUE,
+  nombre VARCHAR(150),
+  descripcion TEXT,
+  tipo_fruto ENUM('racimosas', 'cimosas', 'mixtas') NULL,
+  tipo_semilla  ENUM('redonda', 'alargada', 'plana') NULL,
+  tipo_estipula  ENUM('foliaceas', 'espinosas', 'ocreadas', 'escamosas', 'zarcillos') NULL,
+  orden_id INT NOT NULL,
+  FOREIGN KEY (orden_id) REFERENCES orden(id)
+);
+
+CREATE TABLE genero (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_cientifico VARCHAR(150) NOT NULL UNIQUE,
+  nombre VARCHAR(150),
+  descripcion TEXT,
+  familia_id INT NOT NULL,
+  FOREIGN KEY (familia_id) REFERENCES familia(id)
+);
+
+
+-- -------------------------
+-- CARACTERISTICAS
+-- -------------------------
+
+CREATE TABLE region (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(150) NOT NULL,
+  clima ENUM('tropical', 'subtropical', 'templado', 'seco', 'humedo', 'frio', 'polar') NULL,
+  altitud ENUM('0-500', '500-1500', '1500-3000', '3000-5000', '>5000'),
+  topografia ENUM('llanura', 'valle', 'colina', 'montaña', 'meseta', 'altiplano', 'costa') NULL,
+  descripcion TEXT
+);
+
+CREATE TABLE descubrimiento (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  descubridor VARCHAR(150) NOT NULL,
+  fecha date
+);
+
+CREATE TABLE uso (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(150) NOT NULL,
+  descripcion TEXT
+);
+
+CREATE TABLE propiedades_quimicas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(150) NOT NULL,
+  descripcion TEXT
+);
+
+
+
+
+CREATE TABLE especie (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre_cientifico VARCHAR(150) NOT NULL,
+  nombres_comunes VARCHAR(300) NOT NULL,
+  descripcion TEXT,
+  genero_id INT NOT NULL,
+  region_id INT NULL,
+  descubrimiento_id INT  NULL,
+  FOREIGN KEY (genero_id) REFERENCES genero(id),
+  FOREIGN KEY (region_id) REFERENCES region(id),
+  FOREIGN KEY (descubrimiento_id) REFERENCES descubrimiento(id)
+);
+
+-- Tabla intermedia: relación muchos-a-muchos especie <-> usos
+CREATE TABLE uso_especie (
+  especie_id INT NOT NULL,
+  uso_id INT NOT NULL,
+  comentario TEXT,
+  PRIMARY KEY (especie_id, uso_id),
+  FOREIGN KEY (especie_id) REFERENCES especie(id),
+  FOREIGN KEY (uso_id) REFERENCES uso(id)
+);
+
+-- Tabla intermedia: relación muchos-a-muchos especie <-> propiedades_quimicas
+CREATE TABLE especie_propiedad_quimica (
+  especie_id INT NOT NULL,
+  propiedad_id INT NOT NULL,
+  concentracion VARCHAR(100),   -- opcional, p. ej. "0.1-0.5 mg/g"
+  comentario TEXT,
+  PRIMARY KEY (especie_id, propiedad_id),
+  FOREIGN KEY (especie_id) REFERENCES especie(id),
+  FOREIGN KEY (propiedad_id) REFERENCES propiedades_quimicas(id)
+)

@@ -1,0 +1,26 @@
+
+Verificar tener intalado Python en el entorno o sistema
+
+	python --versión
+
+
+Instalar librerías del archivo requirements.txt
+
+	pip install -r requirements.txt
+
+
+Comprobar que se hayan instaldo todo
+
+	$reqs = Get-Content requirements.txt | ForEach-Object { ($_ -split '==')[0].Trim() }
+	$installed = python -m pip list | ForEach-Object { ($_ -split '\s+')[0] }
+	Compare-Object -ReferenceObject $reqs -DifferenceObject $installed
+
+
+Levantar la API
+
+	uvicorn main:app --reload
+
+
+ingresar a http://127.0.0.1:8000/upload
+
+	Subir imagen y ver prediccion

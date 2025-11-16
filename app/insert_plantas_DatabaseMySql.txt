@@ -1,0 +1,1063 @@
+USE plantas;
+
+
+---REINOS
+
+INSERT INTO reino (nombre, descripcion) VALUES ('Plantae', 'Organismos autótrofos y producen su propio alimento utilizando la luz solar, agua y dióxido de carbono')
+
+
+---DIVICIONES
+
+INSERT INTO division (
+  nombre_cientifico, nombre, descripcion,
+  vasculares, con_semilla, con_flor, con_fruto, reino_id
+) VALUES
+-- 1. Bryophyta
+('Bryophyta', 'Musgos',
+ 'Plantas no vasculares que se reproducen mediante esporas; requieren humedad.',
+ 0, 0, 0, 0, 1),
+
+-- 2. Marchantiophyta
+('Marchantiophyta', 'Hepáticas',
+ 'Plantas no vasculares con gametofito predominante; estructuras aplanadas.',
+ 0, 0, 0, 0, 1),
+
+-- 3. Anthocerotophyta
+('Anthocerotophyta', 'Antocerotas',
+ 'Plantas no vasculares con esporangios alargados en forma de cuerno.',
+ 0, 0, 0, 0, 1),
+
+-- 4. Lycopodiophyta
+('Lycopodiophyta', 'Licopodios',
+ 'Plantas vasculares primitivas sin semillas; se reproducen por esporas.',
+ 1, 0, 0, 0, 1),
+
+-- 5. Monilophyta
+('Monilophyta', 'Helechos y afines',
+ 'Plantas vasculares sin semilla; caracterizadas por frondes y esporangios.',
+ 1, 0, 0, 0, 1),
+
+-- 6. Cycadophyta
+('Cycadophyta', 'Cícadas',
+ 'Gimnospermas parecidas a palmeras, con semillas desnudas.',
+ 1, 1, 0, 0, 1),
+
+-- 7. Ginkgophyta
+('Ginkgophyta', 'Ginkgo',
+ 'Gimnospermas con una sola especie viva: Ginkgo biloba.',
+ 1, 1, 0, 0, 1),
+
+-- 8. Pinophyta
+('Pinophyta', 'Coníferas',
+ 'Gimnospermas con conos y hojas aciculares; semillas desnudas.',
+ 1, 1, 0, 0, 1),
+
+-- 9. Gnetophyta
+('Gnetophyta', 'Gnetales',
+ 'Gimnospermas con características intermedias, poseen vasos en el xilema.',
+ 1, 1, 0, 0, 1),
+
+-- 10. Magnoliophyta
+('Magnoliophyta', 'Angiospermas',
+ 'Plantas con flores y frutos; las más diversas y evolucionadas.',
+ 1, 1, 1, 1, 1);
+
+
+---CLASES
+
+INSERT INTO clase (
+  nombre_cientifico, nombre, descripcion,
+  n_cotiledones, n_flores, venacion_hojas, raiz, tallo, tiene_esporangio, division_id
+) VALUES
+
+-- ========================
+-- 1. BRYOPHYTA (Musgos)
+-- ========================
+('Bryopsida', 'Musgos verdaderos',
+ 'Clase principal de los musgos, plantas no vasculares con esporangios.',
+ NULL, NULL, NULL, NULL, 'herbaceo', 1, 1),
+
+('Polytrichopsida', 'Musgos acrocarpos',
+ 'Musgos con esporofitos más robustos.',
+ NULL, NULL, NULL, NULL, 'herbaceo', 1, 1),
+
+('Sphagnopsida', 'Musgos de sphagnum',
+ 'Musgos de turbera, retienen mucha agua.',
+ NULL, NULL, NULL, NULL, 'herbaceo', 1, 1),
+
+
+-- ==============================
+-- 2. MARCHANTIOPHYTA (Hepáticas)
+-- ==============================
+('Marchantiopsida', 'Hepáticas talosas',
+ 'Plantas no vasculares con talo aplanado.',
+ NULL, NULL, NULL, NULL, 'herbaceo', 1, 2),
+
+('Jungermanniopsida', 'Hepáticas frondosas',
+ 'Plantas no vasculares con gametofito folioso.',
+ NULL, NULL, NULL, NULL, 'herbaceo', 1, 2),
+
+
+-- ===================================
+-- 3. ANTHOCEROTOPHYTA (Antocerotas)
+-- ===================================
+('Anthocerotopsida', 'Antocerotas',
+ 'Plantas no vasculares con esporangios en forma de cuerno.',
+ NULL, NULL, NULL, NULL, 'herbaceo', 1, 3),
+
+
+-- ==================================
+-- 4. LYCOPODIOPHYTA (Licopodios)
+-- ==================================
+('Lycopodiopsida', 'Licopodios',
+ 'Plantas vasculares sin semilla con microfilos.',
+ NULL, NULL, NULL, NULL, 'herbaceo', 1, 4),
+
+('Isoetopsida', 'Isoetes',
+ 'Plantas acuáticas o semiacuáticas primitivas.',
+ NULL, NULL, NULL, NULL, 'herbaceo', 1, 4),
+
+('Selaginellopsida', 'Selaginelas',
+ 'Plantas vasculares sin semilla heterospóreas.',
+ NULL, NULL, NULL, NULL, 'herbaceo', 1, 4),
+
+
+-- =============================
+-- 5. MONILOPHYTA (Helechos)
+-- =============================
+('Polypodiopsida', 'Helechos',
+ 'Plantas vasculares sin semillas, frondes divididas.',
+ NULL, NULL, NULL, NULL, 'herbaceo', 1, 5),
+
+('Equisetopsida', 'Colas de caballo',
+ 'Tallos articulados y esporangios en estróbilos.',
+ NULL, NULL, NULL, NULL, 'herbaceo', 1, 5),
+
+('Marattiopsida', 'Helechos primitivos',
+ 'Helechos grandes con raíces adventicias.',
+ NULL, NULL, NULL, NULL, 'herbaceo', 1, 5),
+
+
+-- ==========================
+-- 6. CYCADOPHYTA (Cícadas)
+-- ==========================
+('Cycadopsida', 'Cícadas',
+ 'Gimnospermas con hojas pinnadas y semillas desnudas.',
+ NULL, NULL, NULL, 'Pivotante', 'leñoso', 0, 6),
+
+
+-- ==========================
+-- 7. GINKGOPHYTA
+-- ==========================
+('Ginkgoopsida', 'Ginkgo',
+ 'Gimnosperma con una sola especie viva: Ginkgo biloba.',
+ NULL, NULL, 'dicrotomica', 'Pivotante', 'leñoso', 0, 7),
+
+
+-- ==========================
+-- 8. PINOPHYTA (Coníferas)
+-- ==========================
+('Pinopsida', 'Coníferas',
+ 'Gimnospermas con conos; hojas aciculares.',
+ NULL, NULL, NULL, 'Pivotante', 'leñoso', 0, 8),
+
+
+-- ==========================
+-- 9. GNETOPHYTA
+-- ==========================
+('Gnetopsida', 'Gnetales',
+ 'Gimnospermas con caracteres intermedios; poseen vasos.',
+ NULL, NULL, NULL, 'Pivotante', 'leñoso', 0, 9),
+
+
+-- ==========================
+-- 10. MAGNOLIOPHYTA (Angiospermas)
+-- ==========================
+
+-- MONOCOTILEDÓNEAS
+('Liliopsida', 'Monocotiledóneas',
+ 'Plantas con 1 cotiledón, venación paralela, raíz fasciculada.',
+ 1, NULL, 'paralela', 'fasciculada', 'herbaceo', 0, 10),
+
+-- DICOTILEDÓNEAS
+('Magnoliopsida', 'Dicotiledóneas',
+ 'Plantas con 2 cotiledones, venación reticulada, raíz pivotante.',
+ 2, NULL, 'reticulada', 'Pivotante', 'herbaceo', 0, 10);
+
+
+
+---ORDENES
+
+INSERT INTO orden (
+  nombre_cientifico, nombre, descripcion,
+  disposición_floral, inflorescencia, posicion_ovario, clase_id
+) VALUES
+
+-- ====================================
+-- 1. BRYOPSIDA (Musgos verdaderos)
+-- ====================================
+('Funariales', 'Funariales', 'Musgos de hábitats húmedos.', NULL, NULL, NULL, 1),
+('Bryales', 'Bryales', 'Uno de los órdenes más grandes de musgos.', NULL, NULL, NULL, 1),
+('Hypnales', 'Hypnales', 'Musgos pleurocárpicos comunes.', NULL, NULL, NULL, 1),
+
+-- ============================================
+-- 2. POLYTRICHOPSIDA (Musgos acrocarpos)
+-- ============================================
+('Polytrichales', 'Polytrichales', 'Musgos robustos, con hojas con lamelas.', NULL, NULL, NULL, 2),
+
+-- ==========================================
+-- 3. SPHAGNOPSIDA (Sphagnum)
+-- ==========================================
+('Sphagnales', 'Sphagnales', 'Musgos de turbera con alta retención de agua.', NULL, NULL, NULL, 3),
+
+
+-- ====================================
+-- 4. MARCHANTIOPSIDA (Hepáticas talosas)
+-- ====================================
+('Marchantiales', 'Marchantiales', 'Hepáticas talosas complejas.', NULL, NULL, NULL, 4),
+('Lunulariales', 'Lunulariales', 'Hepáticas talosas simples.', NULL, NULL, NULL, 4),
+
+-- ====================================
+-- 5. JUNGERMANNIOPSIDA (Hepáticas frondosas)
+-- ====================================
+('Jungermanniales', 'Jungermanniales', 'Hepáticas foliosas muy diversas.', NULL, NULL, NULL, 5),
+
+
+-- ====================================
+-- 6. ANTHOCEROTOPSIDA (Antocerotas)
+-- ====================================
+('Anthocerotales', 'Anthocerotales', 'Plantas con esporangios cilíndricos persistentes.', NULL, NULL, NULL, 6),
+
+
+-- ====================================
+-- 7. LYCOPODIOPSIDA
+-- ====================================
+('Lycopodiales', 'Lycopodiales', 'Licopodios terrestres con microfilos.', NULL, NULL, NULL, 7),
+
+-- ====================================
+-- 8. ISOETOPSIDA
+-- ====================================
+('Isoetales', 'Isoetales', 'Plantas acuáticas con megasporas y microsporas.', NULL, NULL, NULL, 8),
+
+-- ====================================
+-- 9. SELAGINELLOPSIDA
+-- ====================================
+('Selaginellales', 'Selaginellales', 'Selaginelas heterospóreas.', NULL, NULL, NULL, 9),
+
+
+-- ====================================
+-- 10. POLYPODIOPSIDA (Helechos)
+-- ====================================
+('Polypodiales', 'Helechos polipodioides', 'Helechos con frondes diversas.', NULL, NULL, NULL, 10),
+('Cyatheales', 'Helechos arborescentes', 'Helechos grandes, algunos arbóreos.', NULL, NULL, NULL, 10),
+
+-- ====================================
+-- 11. EQUISETOPSIDA (Colas de caballo)
+-- ====================================
+('Equisetales', 'Colas de caballo', 'Plantas con tallos articulados y estróbilos.', NULL, NULL, NULL, 11),
+
+-- ====================================
+-- 12. MARATTIOPSIDA
+-- ====================================
+('Marattiales', 'Marattiales', 'Helechos primitivos, frondes grandes.', NULL, NULL, NULL, 12),
+
+
+-- ====================================
+-- 13. CYCADOPSIDA (Cícadas)
+-- ====================================
+('Cycadales', 'Cícadas', 'Gimnospermas primitivas, hojas pinnadas.', NULL, NULL, NULL, 13),
+
+
+-- ====================================
+-- 14. GINKGOOPSIDA
+-- ====================================
+('Ginkgoales', 'Ginkgo', 'Solo contiene al Ginkgo biloba.', NULL, NULL, NULL, 14),
+
+
+-- ====================================
+-- 15. PINOPHYTA (Coníferas)
+-- ====================================
+('Pinales', 'Coníferas', 'Conos masculinos y femeninos.', NULL, NULL, NULL, 15),
+('Araucariales', 'Araucarias', 'Coníferas del hemisferio sur.', NULL, NULL, NULL, 15),
+('Cupressales', 'Cipreses', 'Incluye Thuja, Juniperus y Cupressus.', NULL, NULL, NULL, 15),
+
+
+-- ====================================
+-- 16. GNETOPSIDA
+-- ====================================
+('Gnetales', 'Gnetales', 'Gimnospermas con vasos en el xilema.', NULL, NULL, NULL, 16),
+
+
+-- ====================================
+-- 17. LILIOPSIDA (Monocotiledóneas)
+-- ====================================
+('Poales', 'Gramíneas y aliados', 'Incluye pastos y bambúes.', 'espiralada', 'racimosas', 'supero', 17),
+('Arecales', 'Palmeras', 'Tallos leñosos no ramificados.', 'verticilada', 'cimosas', 'supero', 17),
+('Asparagales', 'Asparagales', 'Incluye orquídeas.', 'espiralada', 'racimosas', 'infero', 17),
+('Zingiberales', 'Jengibres', 'Plantas aromáticas tropicales.', 'asimetrica', 'cimosas', 'infero', 17),
+
+-- ====================================
+-- 18. MAGNOLIOPSIDA (Dicotiledóneas)
+-- ====================================
+('Rosales', 'Rosales', 'Incluye manzanos, rosas y fresas.', 'espiralada', 'racimosas', 'supero', 18),
+('Fabales', 'Leguminosas', 'Frutos en vaina, fijan nitrógeno.', 'espiralada', 'racimosas', 'supero', 18),
+('Lamiales', 'Labiadas', 'Tallos cuadrados, flores zigomorfas.', 'zigomorfa', 'cimosas', 'infero', 18),
+('Asterales', 'Compuestas', 'Flores en capítulo.', 'espiralada', 'mixtas', 'infero', 18),
+('Brassicales', 'Crucíferas', 'Plantas con glucosinolatos.', 'espiralada', 'racimosas', 'supero', 18);
+
+
+
+
+
+
+
+
+---FAMILIAS
+
+INSERT INTO familia (
+  nombre_cientifico, nombre, descripcion,
+  tipo_fruto, tipo_semilla, tipo_estipula, orden_id
+) VALUES
+
+-- 1-3. Bryopsida (musgos)
+('Funariaceae','Funariaceae','Familia de musgos comunes en suelos húmedos.', NULL, NULL, NULL, 1),
+('Bryaceae','Bryaceae','Familia grande de musgos, incluye Bryum y otros géneros.', NULL, NULL, NULL, 2),
+('Hypnaceae','Hypnaceae','Musgos pleurocárpicos muy extendidos.', NULL, NULL, NULL, 3),
+
+-- 4. Polytrichales
+('Polytrichaceae','Polytrichaceae','Musgos robustos con lamelas en las hojas.', NULL, NULL, NULL, 4),
+
+-- 5. Sphagnales
+('Sphagnaceae','Sphagnaceae','Musgos de turbera (Sphagnum).', NULL, NULL, NULL, 5),
+
+-- 6-7. Marchantiales, Lunulariales (hepáticas)
+('Marchantiaceae','Marchantiaceae','Hepáticas talosas comunes.', NULL, NULL, NULL, 6),
+('Lunulariaceae','Lunulariaceae','Hepáticas con estructuras en forma de media luna.', NULL, NULL, NULL, 7),
+
+-- 8. Jungermanniales (hepáticas frondosas)
+('Jungermanniaceae','Jungermanniaceae','Hepáticas foliosas diversas.', NULL, NULL, NULL, 8),
+
+-- 9. Anthocerotales
+('Anthocerotaceae','Anthocerotaceae','Familia de antocerotas de esporangio alargado.', NULL, NULL, NULL, 9),
+
+-- 10-12. Lycopodiales / Isoetales / Selaginellales
+('Lycopodiaceae','Lycopodiaceae','Licopodios terrestres; microfilos.', NULL, NULL, NULL, 10),
+('Isoetaceae','Isoetaceae','Plantas acuáticas/semiaacuáticas (Isoetes).', NULL, NULL, NULL, 11),
+('Selaginellaceae','Selaginellaceae','Familia que incluye Selaginella.', NULL, NULL, NULL, 12),
+
+-- 13-14. Polypodiales / Cyatheales (helechos)
+('Polypodiaceae','Polipodio','Helechos polipodioides comunes.', NULL, NULL, NULL, 13),
+('Dryopteridaceae','Helechos dryopteris','Helechos de bosques y sotobosque.', NULL, NULL, NULL, 13),
+('Cyatheaceae','Helechos arborescentes','Helechos grandes, tronco arborescente.', NULL, NULL, NULL, 14),
+
+-- 15. Equisetales
+('Equisetaceae','Colas de caballo','Tallos articulados, esporofitos en estróbilos.', NULL, NULL, NULL, 15),
+
+-- 16. Marattiales
+('Marattiaceae','Marattiaceae','Helechos primitivos de gran tamaño.', NULL, NULL, NULL, 16),
+
+-- 17-18. Cícadas y Ginkgo
+('Cycadaceae','Cycadaceae','Familia de cícadas (hojas pinnadas).', NULL, NULL, NULL, 17),
+('Zamiaceae','Zamiaceae','Otra familia de cícadas, con géneros como Zamia.', NULL, NULL, NULL, 17),
+('Ginkgoaceae','Ginkgoaceae','Contiene Ginkgo biloba, único representante vivo.', NULL, NULL, NULL, 18),
+
+-- 19-21. Coníferas (Pinophyta)
+('Pinaceae','Pinaceae','Pinos, abetos y cedros; conos leñosos.', NULL, NULL, NULL, 19),
+('Taxaceae','Taxaceae','Tejos; semillas con arilo carnoso.', NULL, NULL, NULL, 19),
+('Araucariaceae','Araucariaceae','Araucarias y parientes del hemisferio sur.', NULL, NULL, NULL, 20),
+('Cupressaceae','Cupressaceae','Cipreses, thuja y juníperos.', NULL, NULL, NULL, 21),
+
+-- 22. Gnetales
+('Gnetaceae','Gnetaceae','Familia dentro de Gnetales (Gnetum).', NULL, NULL, NULL, 22),
+('Ephedraceae','Ephedraceae','Incluye Ephedra; arbustos con compuestos activos.', NULL, NULL, NULL, 22),
+('Welwitschiaceae','Welwitschiaceae','Contiene Welwitschia, de áreas desérticas.', NULL, NULL, NULL, 22),
+
+-- 23-26. Monocotyledoneae (Poales, Arecales, Asparagales, Zingiberales)
+('Poaceae','Gramíneas','Pastos, cereales y bambúes; importancia económica alta.', NULL, NULL, NULL, 23),
+('Cyperaceae','Ciperáceas','Cañas y juncos; similares a las gramíneas.', NULL, NULL, NULL, 23),
+('Bromeliaceae','Bromeliáceas','Bromelias, muchas epífitas del trópico.', NULL, NULL, NULL, 23),
+('Arecaceae','Palmeras','Palmas con un solo tallo leñoso y hojas pinnadas o palmeadas.', NULL, NULL, NULL, 24),
+('Orchidaceae','Orquídeas','Familia enorme, flores altamente especializadas.', NULL, NULL, NULL, 25),
+('Asparagaceae','Asparagaceae','Incluye esparragos y aliados.', NULL, NULL, NULL, 25),
+('Zingiberaceae','Jengibreras','Jengibre, cúrcuma y plantas aromáticas tropicales.', NULL, NULL, NULL, 26),
+('Musaceae','Musáceas','Banano y plátano; grandes hojas y frutos comestibles.', NULL, NULL, NULL, 26),
+
+-- 27-31. Dicotiledóneas (Rosales, Fabales, Lamiales, Asterales, Brassicales)
+('Rosaceae','Rosaceae','Manzanas, peras, rosas y muchas frutas.', NULL, NULL, NULL, 27),
+('Moraceae','Moraceae','Higos y moras; frutos compuestos y látex.', NULL, NULL, NULL, 27),
+('Fabaceae','Leguminosas','Fruto en vaina; fijación de nitrógeno en muchas especies.', NULL, NULL, NULL, 28),
+('Lamiaceae','Labiadas','Menta, albahaca y plantas aromáticas; tallos cuadrados.', NULL, NULL, NULL, 29),
+('Scrophulariaceae','Antirrhinaceae y aliados','Familia con flores zigomorfas (antes más grande).', NULL, NULL, NULL, 29),
+('Asteraceae','Compuestas','Flores en capítulos; una de las familias más grandes.', NULL, NULL, NULL, 30),
+('Brassicaceae','Brasicáceas','Coles, mostazas y plantas con glucosinolatos.', NULL, NULL, NULL, 31);
+
+
+-- Sapindaceae (Acer)
+('Sapindaceae','Sapindaceae','Familia que incluye arces y otros árboles/arbustos; frutos diversos (ej. sámaras en Acer).', NULL, NULL, NULL, 77),
+
+-- Betulaceae (Alnus, Betula)
+('Betulaceae','Betulaceae','Familia de árboles y arbustos caducifolios como alisos y abedules; inflorescencias amentáceas.', NULL, NULL, NULL, 83),
+
+-- Fagaceae (Castanea, Fagus, Lithocarpus, Quercus)
+('Fagaceae','Fagaceae','Familia de árboles leñosos que incluye robles, hayas y castaños; fruto en forma de aquenio tipo bellota en Quercus.', NULL, NULL, NULL, 83),
+
+-- Cannabaceae (Celtis)
+('Cannabaceae','Cannabaceae','Familia que incluye almez (Celtis) y plantas relacionadas; frutos drupáceos o similares.', NULL, NULL, NULL, 27),
+
+-- Cornaceae (Cornus)
+('Cornaceae','Cornaceae','Familia de árboles y arbustos (cornejos) con hojas simples y flores en corimbos o capítulos.', NULL, NULL, NULL, 84),
+
+-- Anacardiaceae (Cotinus)
+('Anacardiaceae','Anacardiaceae','Familia que incluye pistachos, almácigos y lentiscos; muchas especies con resinas o aceites.', NULL, NULL, NULL, 77),
+
+-- Myrtaceae (Eucalyptus)
+('Myrtaceae','Myrtaceae','Familia de árboles y arbustos con hojas ricas en aceites esenciales; incluidos eucaliptos y mirtos.', NULL, NULL, NULL, 79),
+
+-- Aquifoliaceae (Ilex) — asignado al orden existente en tu CSV (sapindales id=77 en tu mapa anterior)
+('Aquifoliaceae','Aquifoliaceae','Familia de acebos; árboles y arbustos con bayas y hojas a menudo espinosas.', NULL, NULL, NULL, 77),
+
+-- Altingiaceae (Liquidambar)
+('Altingiaceae','Altingiaceae','Familia que incluye Liquidambar; árboles con frutos globosos leñosos.', NULL, NULL, NULL, 81),
+
+-- Magnoliaceae (Liriodendron, Magnolia)
+('Magnoliaceae','Magnoliaceae','Familia de magnolias y árboles primitivos con flores grandes y vistosas.', NULL, NULL, NULL, 82),
+
+-- Oleaceae (Olea)
+('Oleaceae','Oleaceae','Familia que incluye olivos; árboles y arbustos con hojas simples y frutos en drupa.', NULL, NULL, NULL, 29),
+
+-- Hydrangeaceae (Philadelphus)
+('Hydrangeaceae','Hydrangeaceae','Familia de arbustos ornamentales (hortensias y Philadelphus), con inflorescencias en corimbos o panículas.', NULL, NULL, NULL, 81),
+
+-- Salicaceae (Populus, Salix)
+('Salicaceae','Salicaceae','Familia que incluye álamos y sauces; árboles o arbustos con amentos (inflorescencias en amento).', NULL, NULL, NULL, 80),
+
+-- Juglandaceae (Pterocarya)
+('Juglandaceae','Juglandaceae','Familia de nogales y parientes; frutos en núcula alada o bellota compuesta; hojas pinnadas.', NULL, NULL, NULL, 83),
+
+-- Ericaceae (Rhododendron)
+('Ericaceae','Ericaceae','Familia de plantas muchas veces de suelos ácidos; incluye rododendros y ericas.', NULL, NULL, NULL, 78),
+
+-- Ulmaceae (Ulmus, Zelkova)
+('Ulmaceae','Ulmaceae','Familia de olmos y zelkovas; árboles de madera dura y hojas simples asimétricas.', NULL, NULL, NULL, 27),
+
+-- Adoxaceae (Viburnum) -> su orden (Dipsacales) está en tu CSV como id=86
+('Adoxaceae','Adoxaceae','Familia que incluye Viburnum y Adoxa; arbustos y herbáceas con inflorescencias densas.', NULL, NULL, NULL, 86)
+;
+
+
+
+---GENEROS
+
+INSERT INTO genero (nombre_cientifico, nombre, descripcion, familia_id) VALUES
+-- 1 Funariaceae
+('Funaria','Funaria','Género de musgos típico en suelos perturbados.', 1),
+('Physcomitrium','Physcomitrium','Musgos anuales con cápsulas esféricas.', 1),
+
+-- 2 Bryaceae
+('Bryum','Bryum','Musgos pequeños, comunes en suelos y rocas.', 2),
+('Brachythecium','Brachythecium','Musgos del sotobosque y ambientes húmedos.', 2),
+
+-- 3 Hypnaceae
+('Hypnum','Hypnum','Musgos pleurocárpicos de frondes densas.', 3),
+('Plagiothecium','Plagiothecium','Musgos de aspecto delgado y estera.', 3),
+
+-- 4 Polytrichaceae
+('Polytrichum','Polytrichum','Musgos robustos con hojas con láminas.', 4),
+('Atrichum','Atrichum','Musgos acrocarpos de tamaños medianos.', 4),
+
+-- 5 Sphagnaceae
+('Sphagnum','Sphagnum','Musgos de turberas, alto poder de retención hídrica.', 5),
+('Flatbergium','Flatbergium','Género segregado recientemente del grupo Sphagnum.', 5),
+
+-- 6 Marchantiaceae
+('Marchantia','Marchantia','Hepáticas talosas comunes en suelos húmedos.', 6),
+('Conocephalum','Conocephalum','Hepáticas talosas grandes y aromáticas.', 6),
+
+-- 7 Lunulariaceae
+('Lunularia','Lunularia','Hepáticas con talo en forma de media luna.', 7),
+('Asterella','Asterella','Hepáticas talosas similares en apariencia.', 7),
+
+-- 8 Jungermanniaceae
+('Jungermannia','Jungermannia','Hepáticas foliosas diversas.', 8),
+('Frullania','Frullania','Hepáticas epífitas con lóbulos marcados.', 8),
+
+-- 9 Anthocerotaceae
+('Anthoceros','Anthoceros','Antocerotas con esporangios en forma de cuerno.', 9),
+('Notothylas','Notothylas','Antocerotas pequeñas y terrestres.', 9),
+
+-- 10 Lycopodiaceae
+('Lycopodium','Lycopodium','Licopodios terrestres, tallos rastreros.', 10),
+('Huperzia','Huperzia','Licopodios de hábito más erecto.', 10),
+
+-- 11 Isoetaceae
+('Isoetes','Isoetes','Plantas acuáticas o semiacuáticas (quillworts).', 11),
+('Tomiostrobus','Tomiostrobus','Género cercano en ambientes acuáticos.', 11),
+
+-- 12 Selaginellaceae
+('Selaginella','Selaginella','Selaginelas, pequeñas y a menudo rizomatosas.', 12),
+('Selaginellopsis','Selaginellopsis','Género relacionado con especies de humedad.', 12),
+
+-- 13 Polypodiaceae
+('Polypodium','Polypodium','Helechos epífitos y terrestres; frondes divididas.', 13),
+('Phlebodium','Phlebodium','Helechos con frondes grandes y persistentes.', 13),
+
+-- 14 Dryopteridaceae
+('Dryopteris','Dryopteris','Helechos de sotobosque, comunes en bosques templados.', 14),
+('Athyrium','Athyrium','Helechos con pinnas delicadas y coloración variada.', 14),
+
+-- 15 Cyatheaceae
+('Cyathea','Cyathea','Helechos arborescentes típicos de selvas húmedas.', 15),
+('Alsophila','Alsophila','Helechos arborescentes con tronco firme.', 15),
+
+-- 16 Equisetaceae
+('Equisetum','Equisetum','Colas de caballo, tallos articulados y sin hojas aparentes.', 16),
+('Hippochaete','Hippochaete','Antiguamente segregado; especies del grupo Equisetum.', 16),
+
+-- 17 Marattiaceae
+('Marattia','Marattia','Helechos primitivos de frondes grandes.', 17),
+('Angiopteris','Angiopteris','Helechos con frondes muy grandes y raquis robusto.', 17),
+
+-- 18 Cycadaceae
+('Cycadus','Cycadus','Género representativo de cícadas (ejemplo tradicional).', 18),
+('Macrozamia','Macrozamia','Cícadas del hemisferio sur con conos grandes.', 18),
+
+-- 19 Zamiaceae
+('Zamia','Zamia','Cícadas neotropicales de porte bajo a medio.', 19),
+('Encephalartos','Encephalartos','Cícadas africanas, a menudo con hojas rígidas.', 19),
+
+-- 20 Ginkgoaceae
+('Ginkgo','Ginkgo','Único género vivo; Ginkgo biloba.', 20),
+('Sphenobaiera','Sphenobaiera','Género fósil relacionado (uso histórico).', 20),
+
+-- 21 Pinaceae
+('Pinus','Pinus','Pinos: conos leñosos y hojas aciculares.', 21),
+('Abies','Abies','Abetos: conos erectos que se desarticulan.', 21),
+
+-- 22 Taxaceae
+('Taxus','Taxus','Tejos con semillas rodeadas por arilo carnoso.', 22),
+('Austrotaxus','Austrotaxus','Género de tejos del Pacífico suroeste.', 22),
+
+-- 23 Araucariaceae
+('Araucaria','Araucaria','Araucarias; coníferas de gran porte y hojas rígidas.', 23),
+('Agathis','Agathis','Coníferas del trópico con madera valiosa.', 23),
+
+-- 24 Cupressaceae
+('Cupressus','Cupressus','Cipreses de follaje denso y conos leñosos.', 24),
+('Juniperus','Juniperus','Género que incluye enebros; conos tipo baya.', 24),
+
+-- 25 Gnetaceae
+('Gnetum','Gnetum','Gnetales tropicales, hojas anchas y semillas visibles.', 25),
+('GnetumR','GnetumR','Género representativo (nombre alternativo usado en listados).', 25),
+
+-- 26 Ephedraceae
+('Ephedra','Ephedra','Arbustos xerófitos con compuestos alcaloides.', 26),
+('Archaeephedra','Archaeephedra','Género fósil/emparentado (uso referencia).', 26),
+
+-- 27 Welwitschiaceae
+('Welwitschia','Welwitschia','Único género vivo con hojas muy largas en desiertos.', 27),
+('Welwitschiopsis','Welwitschiopsis','Género relacionado (referencial).', 27),
+
+-- 28 Poaceae
+('Poa','Poa','Género de gramíneas (pasto azul), muy común.', 28),
+('Triticum','Triticum','Género que incluye el trigo.', 28),
+
+-- 29 Cyperaceae
+('Carex','Carex','Ciperáceas dominantes en humedales; numerosas especies.', 29),
+('Cyperus','Cyperus','Género de juncos y ciperáceas tolerantes al agua.', 29),
+
+-- 30 Bromeliaceae
+('Bromelia','Bromelia','Bromelias terrestres; fruto en algunas especies.', 30),
+('Tillandsia','Tillandsia','Epífitas (clavel del aire) muy diversas.', 30),
+
+-- 31 Arecaceae
+('Cocos','Cocos','Incluye la palmera cocotero (Cocos nucifera).', 31),
+('Elaeis','Elaeis','Palmeras productoras de aceite (Elaeis guineensis).', 31),
+
+-- 32 Orchidaceae
+('Phalaenopsis','Phalaenopsis','Orquídeas populares en cultivo.', 32),
+('Cattleya','Cattleya','Orquídeas ornamentales de gran valor.', 32),
+
+-- 33 Asparagaceae
+('Asparagus','Asparagus','Incluye el espárrago comestible.', 33),
+('Agave','Agave','Plantas suculentas con rosetas grandes.', 33),
+
+-- 34 Zingiberaceae
+('Zingiber','Zingiber','Incluye el jengibre (Zingiber officinale).', 34),
+('Curcuma','Curcuma','Incluye la cúrcuma, rizomas aromáticos.', 34),
+
+-- 35 Musaceae
+('Musa','Musa','Plátanos y bananos cultivados.', 35),
+('Ensete','Ensete','Género similar a Musa, bananos africanos.', 35),
+
+-- 36 Rosaceae
+('Rosa','Rosa','Rosas; flores con hipanto y pétalos numerosos.', 36),
+('Malus','Malus','Manzanos; árboles frutales de la familia.', 36),
+
+-- 37 Moraceae
+('Ficus','Ficus','Higos y árboles con syconium (fruto compuesto).', 37),
+('Morus','Morus','Morera; frutas comestibles y corteza fibrosa.', 37),
+
+-- 38 Fabaceae
+('Pisum','Pisum','Guisantes y leguminosas de vaina.', 38),
+('Phaseolus','Phaseolus','Frijoles y habichuelas comestibles.', 38),
+
+-- 39 Lamiaceae
+('Mentha','Mentha','Mentas aromáticas, hojas usadas en cocina.', 39),
+('Ocimum','Ocimum','Albahaca y géneros culinarios aromáticos.', 39),
+
+-- 40 Scrophulariaceae
+('Verbascum','Verbascum','Género con flores tubulares y aspecto vistoso.', 40),
+('Antirrhinum','Antirrhinum','Boca de dragón, flores zigomorfas.', 40),
+
+-- 41 Asteraceae
+('Helianthus','Helianthus','Girasoles y géneros con capítulo de flores.', 41),
+('Taraxacum','Taraxacum','Dientes de león; flores en capítulos y dispersión de semillas.', 41),
+
+-- 42 Brassicaceae
+('Brassica','Brassica','Coles, mostazas y crucíferas comestibles.', 42),
+('Arabidopsis','Arabidopsis','Género modelo en biología vegetal (A. thaliana).', 42)
+;
+
+('Acer', 'Arce', 'Género de árboles y arbustos conocidos por sus hojas palmadas y colores otoñales intensos.', 166),
+('Alnus', 'Aliso', 'Árboles caducifolios fijadores de nitrógeno que habitan zonas húmedas.', 167),
+('Arundinaria', 'Bambú americano', 'Género de bambúes leñosos pertenecientes a la familia Poaceae.', 28),
+('Betula', 'Abedul', 'Árboles de corteza blanca característica y hojas simples, ampliamente distribuidos en zonas templadas.', 167),
+('Callicarpa', 'Baya de belleza', 'Arbustos ornamentales famosos por sus frutos púrpuras brillantes.', 39),
+('Castanea', 'Castaño', 'Árboles productores de castañas comestibles y madera de alta calidad.', 168),
+('Celtis', 'Almez', 'Árboles y arbustos resistentes, con frutos drupáceos pequeños.', 169),
+('Cercis', 'Árbol del amor', 'Árboles ornamentales que florecen abundantemente en primavera.', 38),
+('Cornus', 'Cornejo', 'Arbustos o árboles con brácteas vistosas y frutos carnosos.', 170),
+('Cotinus', 'Árbol del humo', 'Arbustos con inflorescencias plumosas que dan apariencia de humo.', 171),
+('Crataegus', 'Espino', 'Arbustos espinosos con flores blancas y frutos pequeños comestibles.', 36),
+('Cytisus', 'Retama', 'Arbustos leguminosos con flores amarillas llamativas.', 38),
+('Eucalyptus', 'Eucalipto', 'Árboles aromáticos de rápido crecimiento originarios de Australia.', 172),
+('Fagus', 'Haya', 'Árboles majestuosos de madera dura y follaje denso.', 168),
+('Ilex', 'Acebo', 'Arbustos y árboles de hojas brillantes y frutos rojos.', 173),
+('Liquidambar', 'Liquidámbar', 'Árboles con hojas lobuladas y colores otoñales intensos.', 174),
+('Liriodendron', 'Tulípero', 'Árboles de grandes flores y hojas distintivas en forma de violín.', 175),
+('Lithocarpus', 'Roble de piedra', 'Árboles siempreverdes similares a los robles pero con cúpulas más robustas.', 168),
+('Magnolia', 'Magnolia', 'Árboles y arbustos con grandes flores aromáticas.', 175),
+('Olea', 'Olivo', 'Árboles de hoja perenne famosos por producir aceitunas.', 176),
+('Philadelphus', 'Celinda', 'Arbustos ornamentales fragantes conocidos como “falso jazmín”.', 177),
+('Populus', 'Álamo', 'Árboles de rápido crecimiento comunes en zonas húmedas.', 178),
+('Prunus', 'Cerezo/Ciruelo', 'Género diverso que incluye cerezos, ciruelos, almendros y durazneros.', 36),
+('Pterocarya', 'Nogal alado', 'Árboles de follaje denso y frutos alados característicos.', 179),
+('Quercus', 'Roble/Encina', 'Género de árboles emblemáticos productores de bellotas.', 168),
+('Rhododendron', 'Rododendro', 'Arbustos de hojas perennes con flores vistosas y abundantes.', 180),
+('Salix', 'Sauce', 'Árboles y arbustos de ramas flexibles adaptados a zonas húmedas.', 178),
+('Sorbus', 'Serbal', 'Árboles y arbustos con frutos rojizos agrupados.', 36),
+('Tilia', 'Tilo', 'Árboles aromáticos cuyas flores se utilizan para infusiones.', 168),
+('Ulmus', 'Olmo', 'Árboles de madera resistente y hojas dentadas.', 181),
+('Viburnum', 'Viburno', 'Arbustos ornamentales con inflorescencias en corimbo.', 182),
+('Zelkova', 'Zelkova', 'Árboles ornamentales resistentes, cercanos a los olmos.', 181);
+
+
+
+
+
+---REGIONES
+
+INSERT INTO region (nombre, clima, altitud, topografia, descripcion) VALUES
+('Bosque templado caducifolio', 'templado', '500-1500', 'colina',
+ 'Bosques con árboles que pierden sus hojas en otoño. Suelen encontrarse en zonas de clima templado con estaciones marcadas.'),
+
+('Bosque templado de coníferas', 'templado', '500-3000', 'montaña',
+ 'Bosques dominados por pinos y abetos. Comunes en regiones montañosas con clima frío y templado.'),
+
+('Bosque mediterráneo', 'templado', '0-500', 'colina',
+ 'Ecosistema caracterizado por veranos secos e inviernos suaves. Dominado por matorrales y encinas.'),
+
+('Bosque boreal (taiga)', 'frio', '500-1500', 'llanura',
+ 'Amplias extensiones de coníferas en regiones frías del hemisferio norte. Suelo pobre y clima severo.'),
+
+('Selva tropical húmeda', 'tropical', '0-500', 'llanura',
+ 'Bosques con gran biodiversidad, altas precipitaciones y temperaturas elevadas durante todo el año.'),
+
+('Selva subtropical', 'subtropical', '0-500', 'llanura',
+ 'Bosques cálidos y húmedos, con estaciones menos marcadas que los tropicales.'),
+
+('Sabana', 'tropical', '500-1500', 'llanura',
+ 'Región de pastizales con árboles dispersos, clima tropical con estaciones seca y húmeda.'),
+
+('Pradera templada', 'templado', '500-1500', 'llanura',
+ 'Extensos pastizales ubicados en regiones de clima templado y precipitaciones moderadas.'),
+
+('Matorral xerófilo', 'seco', '0-1500', 'colina',
+ 'Vegetación de arbustos resistentes a la sequía. Típico de zonas áridas y semiáridas.'),
+
+('Desierto cálido', 'seco', '0-500', 'llanura',
+ 'Regiones extremadamente secas, con altas temperaturas y vegetación escasa.'),
+
+('Desierto frío', 'frio', '500-3000', 'meseta',
+ 'Zonas áridas con temperaturas muy bajas y vegetación mínima.'),
+
+('Tundra alpina', 'frio', '3000-5000', 'montaña',
+ 'Ecosistema en zonas de alta montaña, frío extremo, sin árboles y con vegetación baja.'),
+
+('Tundra ártica', 'polar', '0-500', 'llanura',
+ 'Región extremadamente fría del hemisferio norte, con permafrost y vegetación escasa.');
+
+
+
+
+---DESCUBRIDOR
+
+INSERT INTO descubrimiento (descubridor, fecha) VALUES
+  ('Karl Maximovich (Maxim.)', '1867-11-13'),   -- Acer capillipes (Maxim., 1867-11-13)
+  ('Frederick Pursh (Pursh)', '1813-01-01'),    -- Acer circinatum (Pursh, 1813)
+  ('Karl Maximovich (Maxim.)', '1856-01-01'),   -- Acer mono (Maxim., 1856)
+  ('Philip Miller (Mill.)', '1768-04-16'),      -- Acer opalus (Mill., 1768-04-16)
+  ('Carl P. Thunberg (Thunb.)', '1784-05-01'),  -- Acer palmatum (Thunb., 1784 - May/Jun 1784)
+  ('Carl P. Thunberg (Thunb.)', '1783-01-01'),  -- Acer pictum (Thunb., 1783)
+  ('Carl Linnaeus (L.)', '1753-05-01'),         -- Acer platanoides (L., 1753-05-01)
+  ('Carl Linnaeus (L.)', '1753-05-01'),         -- Acer rubrum (L., 1753-05-01)
+  ('P. F. von Siebold & J. G. Zuccarini (Siebold & Zucc.)', '1845-01-01'), -- Acer rufinerve (Siebold & Zucc., 1845)
+  ('Carl Linnaeus (L.)', '1753-05-01');         -- Acer saccharinum (L., 1753-05-01)
+  ('(Loisel.) Duby', '1828-04-12'),     -- Alnus cordata (Loisel.) Duby (IPNI: 12-14 Apr 1828)
+  ('Callier', '1904-01-01'),            -- Alnus maximowiczii Callier (publ. 1904)
+  ('Bong.', '1832-01-01'),              -- Alnus rubra Bong. (1832)
+  ('Matsum.', '1902-01-01'),            -- Alnus sieboldiana Matsum. (1902)
+  ('(Chaix) DC.', '1805-01-01'),        -- Alnus viridis (Chaix) DC. (1805)
+  ('Carrière; recomb. Rivière & C.Rivière (1878)', '1878-01-01'), -- Arundinaria simonii (Carrière) Rivière & C.Rivière (1878)
+  ('Chun ex P.C.Li', '1979-01-01'),     -- Betula austrosinensis Chun ex P.C.Li (1979)
+  ('Roth', '1788-01-01'),               -- Betula pendula Roth (1788)
+  ('H.Lév.', '1911-01-01'),             -- Callicarpa bodinieri H.Lév. (1911)
+  ('Mill.', '1768-04-16');              -- Castanea sativa Mill. (16 Apr 1768)
+
+
+
+
+---ESPECIES UTILIZADAS
+
+INSERT INTO especie (nombre_cientifico, nombres_comunes, descripcion, genero_id)
+VALUES
+('Acer_Capillipes', 'Arce capillipes', 'Especie del género Acer.', 152),
+('Acer_Circinatum', 'Arce circinado', 'Especie del género Acer.', 152),
+('Acer_Mono', 'Arce mono', 'Especie del género Acer.', 152),
+('Acer_Opalus', 'Arce opalus', 'Especie del género Acer.', 152),
+('Acer_Palmatum', 'Arce japonés', 'Especie del género Acer.', 152),
+('Acer_Pictum', 'Arce pictum', 'Especie del género Acer.', 152),
+('Acer_Platanoids', 'Arce plátanoide', 'Especie del género Acer.', 152),
+('Acer_Rubrum', 'Arce rojo', 'Especie del género Acer.', 152),
+('Acer_Rufinerve', 'Arce rufinerve', 'Especie del género Acer.', 152),
+('Acer_Saccharinum', 'Arce plateado', 'Especie del género Acer.', 152),
+
+('Alnus_Cordata', 'Aliso italiano', 'Especie del género Alnus.', 153),
+('Alnus_Maximowiczii', 'Aliso Maximowiczii', 'Especie del género Alnus.', 153),
+('Alnus_Rubra', 'Aliso rojo', 'Especie del género Alnus.', 153),
+('Alnus_Sieboldiana', 'Aliso Siebold', 'Especie del género Alnus.', 153),
+('Alnus_Viridis', 'Aliso verde', 'Especie del género Alnus.', 153),
+
+('Arundinaria_Simonii', 'Bambú de Simon', 'Especie del género Arundinaria.', 154),
+
+('Betula_Austrosinensis', 'Abedul chino', 'Especie del género Betula.', 155),
+('Betula_Pendula', 'Abedul péndulo', 'Especie del género Betula.', 155),
+
+('Callicarpa_Bodinieri', 'Callicarpa de Bodinier', 'Especie del género Callicarpa.', 156),
+
+('Castanea_Sativa', 'Castaño común', 'Especie del género Castanea.', 157),
+
+('Celtis_Koraiensis', 'Almez coreano', 'Especie del género Celtis.', 158),
+
+('Cercis_Siliquastrum', 'Árbol del amor', 'Especie del género Cercis.', 159),
+
+('Cornus_Chinensis', 'Cornejo chino', 'Especie del género Cornus.', 160),
+('Cornus_Controversa', 'Cornejo controversial', 'Especie del género Cornus.', 160),
+('Cornus_Macrophylla', 'Cornejo de hojas grandes', 'Especie del género Cornus.', 160),
+
+('Cotinus_Coggygria', 'Árbol de las pelusas', 'Especie del género Cotinus.', 161),
+
+('Crataegus_Monogyna', 'Espino albar', 'Especie del género Crataegus.', 162),
+
+('Cytisus_Battandieri', 'Retama marroquí', 'Especie del género Cytisus.', 163),
+
+('Eucalyptus_Glaucescens', 'Eucalipto glauco', 'Especie del género Eucalyptus.', 164),
+('Eucalyptus_Neglecta', 'Eucalipto neglecta', 'Especie del género Eucalyptus.', 164),
+('Eucalyptus_Urnigera', 'Eucalipto urnigera', 'Especie del género Eucalyptus.', 164),
+
+('Fagus_Sylvatica', 'Haya europea', 'Especie del género Fagus.', 165),
+
+('Ginkgo_Biloba', 'Ginkgo', 'Única especie viva del género Ginkgo.', 39),
+
+('Ilex_Aquifolium', 'Acebo común', 'Especie del género Ilex.', 166),
+('Ilex_Cornuta', 'Acebo cornudo', 'Especie del género Ilex.', 166),
+
+('Liquidambar_Styraciflua', 'Árbol del ámbar', 'Especie del género Liquidambar.', 167),
+
+('Liriodendron_Tulipifera', 'Árbol de tulipán', 'Especie del género Liriodendron.', 168),
+
+('Lithocarpus_Cleistocarpus', 'Roble de piedra cleistocarpus', 'Especie del género Lithocarpus.', 169),
+('Lithocarpus_Edulis', 'Roble de piedra japonés', 'Especie del género Lithocarpus.', 169),
+
+('Magnolia_Heptapeta', 'Magnolia heptapeta', 'Especie del género Magnolia.', 170),
+('Magnolia_Salicifolia', 'Magnolia de hojas de sauce', 'Especie del género Magnolia.', 170),
+
+('Morus_Nigra', 'Moral negro', 'Especie del género Morus.', 74),
+
+('Olea_Europaea', 'Olivo', 'Especie del género Olea.', 171),
+
+('Phildelphus', 'Filadelfo', 'Especie del género Philadelphus.', 172),
+
+('Populus_Adenopoda', 'Álamo adenopoda', 'Especie del género Populus.', 173),
+('Populus_Grandidentata', 'Álamo de dientes grandes', 'Especie del género Populus.', 173),
+('Populus_Nigra', 'Álamo negro', 'Especie del género Populus.', 173),
+
+('Prunus_Avium', 'Cerezo dulce', 'Especie del género Prunus.', 174),
+('Prunus_X_Shmittii', 'Cerezo híbrido Shmittii', 'Especie del género Prunus.', 174),
+
+('Pterocarya_Stenoptera', 'Nogal alado chino', 'Especie del género Pterocarya.', 175),
+
+('Quercus_Afares', 'Encina Afares', 'Especie del género Quercus.', 176),
+('Quercus_Agrifolia', 'Encina californiana', 'Especie del género Quercus.', 176),
+('Quercus_Alnifolia', 'Encina chipriota', 'Especie del género Quercus.', 176),
+('Quercus_Brantii', 'Roble iraní', 'Especie del género Quercus.', 176),
+('Quercus_Canariensis', 'Quejigo andaluz', 'Especie del género Quercus.', 176),
+('Quercus_Castaneifolia', 'Roble castaño', 'Especie del género Quercus.', 176),
+('Quercus_Cerris', 'Cerro roble', 'Especie del género Quercus.', 176),
+('Quercus_Chrysolepis', 'Roble de oro', 'Especie del género Quercus.', 176),
+('Quercus_Coccifera', 'Coscoja', 'Especie del género Quercus.', 176),
+('Quercus_Coccinea', 'Roble escarlata', 'Especie del género Quercus.', 176),
+('Quercus_Crassifolia', 'Roble crassifolia', 'Especie del género Quercus.', 176),
+('Quercus_Crassipes', 'Roble crassipes', 'Especie del género Quercus.', 176),
+('Quercus_Dolicholepis', 'Roble dolicholepis', 'Especie del género Quercus.', 176),
+('Quercus_Ellipsoidalis', 'Roble ellipsoidalis', 'Especie del género Quercus.', 176),
+('Quercus_Greggii', 'Roble Greggii', 'Especie del género Quercus.', 176),
+('Quercus_Hartwissiana', 'Roble Hartwiss', 'Especie del género Quercus.', 176),
+('Quercus_Ilex', 'Encina', 'Especie del género Quercus.', 176),
+('Quercus_Imbricaria', 'Roble imbricado', 'Especie del género Quercus.', 176),
+('Quercus_Infectoria_sub', 'Roble infectoria subsp.', 'Especie del género Quercus.', 176),
+('Quercus_Kewensis', 'Roble Kewensis', 'Especie del género Quercus.', 176),
+('Quercus_Nigra', 'Roble negro', 'Especie del género Quercus.', 176),
+('Quercus_Palustris', 'Roble de los pantanos', 'Especie del género Quercus.', 176),
+('Quercus_Phellos', 'Roble sauce', 'Especie del género Quercus.', 176),
+('Quercus_Phillyraeoides', 'Roble phillyraeoides', 'Especie del género Quercus.', 176),
+('Quercus_Pontica', 'Roble póntico', 'Especie del género Quercus.', 176),
+('Quercus_Pubescens', 'Roble pubescente', 'Especie del género Quercus.', 176),
+('Quercus_Pyrenaica', 'Rebollo', 'Especie del género Quercus.', 176),
+('Quercus_Rhysophylla', 'Roble rojo mexicano', 'Especie del género Quercus.', 176),
+('Quercus_Rubra', 'Roble rojo americano', 'Especie del género Quercus.', 176),
+('Quercus_Semecarpifolia', 'Roble Himalayo', 'Especie del género Quercus.', 176),
+('Quercus_Shumardii', 'Roble Shumard', 'Especie del género Quercus.', 176),
+('Quercus_Suber', 'Alcornoque', 'Especie del género Quercus.', 176),
+('Quercus_Texana', 'Roble texano', 'Especie del género Quercus.', 176),
+('Quercus_Trojana', 'Roble troyano', 'Especie del género Quercus.', 176),
+('Quercus_Variabilis', 'Roble variabilis', 'Especie del género Quercus.', 176),
+('Quercus_Vulcanica', 'Roble volcánico', 'Especie del género Quercus.', 176),
+('Quercus_x_Hispanica', 'Roble híbrido hispánico', 'Especie del género Quercus.', 176),
+('Quercus_x_Turneri', 'Roble Turner', 'Especie del género Quercus.', 176),
+
+('Rhododendron_x_Russellianum', 'Rododendro Russellianum', 'Especie híbrida del género Rhododendron.', 177),
+
+('Salix_Fragilis', 'Sauce quebradizo', 'Especie del género Salix.', 178),
+('Salix_Intergra', 'Sauce integra', 'Especie del géne_
+
+
+-----regiones
+-- Actualiza region_id por especie (asignaciones generales por hábitat)
+UPDATE especie
+SET region_id = CASE nombre_cientifico
+
+  -- Acer -> Bosque templado caducifolio
+  WHEN 'Acer_Capillipes' THEN 1
+  WHEN 'Acer_Circinatum' THEN 1
+  WHEN 'Acer_Mono' THEN 1
+  WHEN 'Acer_Opalus' THEN 1
+  WHEN 'Acer_Palmatum' THEN 1
+  WHEN 'Acer_Pictum' THEN 1
+  WHEN 'Acer_Platanoids' THEN 1
+  WHEN 'Acer_Rubrum' THEN 1
+  WHEN 'Acer_Rufinerve' THEN 1
+  WHEN 'Acer_Saccharinum' THEN 1
+
+  -- Alnus -> Bosque templado caducifolio (ribereños)
+  WHEN 'Alnus_Cordata' THEN 1
+  WHEN 'Alnus_Maximowiczii' THEN 1
+  WHEN 'Alnus_Rubra' THEN 1
+  WHEN 'Alnus_Sieboldiana' THEN 1
+  WHEN 'Alnus_Viridis' THEN 1
+
+  -- Bambú (Arundinaria) -> Selva subtropical / templada cálida
+  WHEN 'Arundinaria_Simonii' THEN 6
+
+  -- Betula -> Bosque templado / boreal según especie (se asigna templado por defecto)
+  WHEN 'Betula_Austrosinensis' THEN 1
+  WHEN 'Betula_Pendula' THEN 1
+
+  -- Arbustos asiáticos y ornamentales
+  WHEN 'Callicarpa_Bodinieri' THEN 6
+
+  -- Castanea -> regiones mediterráneas/templadas
+  WHEN 'Castanea_Sativa' THEN 3
+
+  WHEN 'Celtis_Koraiensis' THEN 1
+  WHEN 'Cercis_Siliquastrum' THEN 3
+
+  -- Cornus -> bosques templados
+  WHEN 'Cornus_Chinensis' THEN 1
+  WHEN 'Cornus_Controversa' THEN 1
+  WHEN 'Cornus_Macrophylla' THEN 1
+
+  WHEN 'Cotinus_Coggygria' THEN 3
+  WHEN 'Crataegus_Monogyna' THEN 1
+
+  -- Cytisus (retama) -> matorral / mediterráneo-seco
+  WHEN 'Cytisus_Battandieri' THEN 9
+
+  -- Eucalyptus -> mayormente subtropical / sclerophyll (asignado subtropical)
+  WHEN 'Eucalyptus_Glaucescens' THEN 6
+  WHEN 'Eucalyptus_Neglecta' THEN 6
+  WHEN 'Eucalyptus_Urnigera' THEN 6
+
+  WHEN 'Fagus_Sylvatica' THEN 1
+
+  WHEN 'Ginkgo_Biloba' THEN 1
+
+  WHEN 'Ilex_Aquifolium' THEN 1
+  WHEN 'Ilex_Cornuta' THEN 6
+
+  WHEN 'Liquidambar_Styraciflua' THEN 1
+  WHEN 'Liriodendron_Tulipifera' THEN 1
+
+  WHEN 'Lithocarpus_Cleistocarpus' THEN 6
+  WHEN 'Lithocarpus_Edulis' THEN 6
+
+  WHEN 'Magnolia_Heptapeta' THEN 6
+  WHEN 'Magnolia_Salicifolia' THEN 6
+
+  WHEN 'Morus_Nigra' THEN 3
+
+  WHEN 'Olea_Europaea' THEN 3
+
+  -- Philadelphus (Philadelphus) -> arbusto ornamental, templado
+  WHEN 'Phildelphus' THEN 1
+
+  -- Populus -> álamos, ribereños templados
+  WHEN 'Populus_Adenopoda' THEN 1
+  WHEN 'Populus_Grandidentata' THEN 1
+  WHEN 'Populus_Nigra' THEN 1
+
+  WHEN 'Prunus_Avium' THEN 1
+  WHEN 'Prunus_X_Shmittii' THEN 1
+
+  WHEN 'Pterocarya_Stenoptera' THEN 6
+
+  -- Quercus: mezcla; asignaciones generales por origen/hábitat
+  WHEN 'Quercus_Afares' THEN 3
+  WHEN 'Quercus_Agrifolia' THEN 3
+  WHEN 'Quercus_Alnifolia' THEN 3
+  WHEN 'Quercus_Brantii' THEN 3
+  WHEN 'Quercus_Canariensis' THEN 3
+  WHEN 'Quercus_Castaneifolia' THEN 6
+  WHEN 'Quercus_Cerris' THEN 3
+  WHEN 'Quercus_Chrysolepis' THEN 1
+  WHEN 'Quercus_Coccifera' THEN 3
+  WHEN 'Quercus_Coccinea' THEN 1
+  WHEN 'Quercus_Crassifolia' THEN 1
+  WHEN 'Quercus_Crassipes' THEN 1
+  WHEN 'Quercus_Dolicholepis' THEN 6
+  WHEN 'Quercus_Ellipsoidalis' THEN 1
+  WHEN 'Quercus_Greggii' THEN 1
+  WHEN 'Quercus_Hartwissiana' THEN 6
+  WHEN 'Quercus_Ilex' THEN 3
+  WHEN 'Quercus_Imbricaria' THEN 1
+  WHEN 'Quercus_Infectoria_sub' THEN 3
+  WHEN 'Quercus_Kewensis' THEN 3
+  WHEN 'Quercus_Nigra' THEN 1
+  WHEN 'Quercus_Palustris' THEN 1
+  WHEN 'Quercus_Phellos' THEN 1
+  WHEN 'Quercus_Phillyraeoides' THEN 3
+  WHEN 'Quercus_Pontica' THEN 3
+  WHEN 'Quercus_Pubescens' THEN 3
+  WHEN 'Quercus_Pyrenaica' THEN 3
+  WHEN 'Quercus_Rhysophylla' THEN 1
+  WHEN 'Quercus_Rubra' THEN 1
+  WHEN 'Quercus_Semecarpifolia' THEN 6
+  WHEN 'Quercus_Shumardii' THEN 1
+  WHEN 'Quercus_Suber' THEN 3
+  WHEN 'Quercus_Texana' THEN 1
+  WHEN 'Quercus_Trojana' THEN 3
+  WHEN 'Quercus_Variabilis' THEN 6
+  WHEN 'Quercus_Vulcanica' THEN 3
+  WHEN 'Quercus_x_Hispanica' THEN 3
+  WHEN 'Quercus_x_Turneri' THEN 3
+
+  WHEN 'Rhododendron_x_Russellianum' THEN 6
+
+  WHEN 'Salix_Fragilis' THEN 1
+  WHEN 'Salix_Intergra' THEN 1
+
+  WHEN 'Sorbus_Aria' THEN 1
+
+  WHEN 'Tilia_Oliveri' THEN 1
+  WHEN 'Tilia_Platyphyllos' THEN 1
+  WHEN 'Tilia_Tomentosa' THEN 1
+
+  WHEN 'Ulmus_Bergmanniana' THEN 1
+
+  WHEN 'Viburnum_Tinus' THEN 3
+  WHEN 'Viburnum_x_Rhytidophylloides' THEN 1
+
+  WHEN 'Zelkova_Serrata' THEN 1
+
+  -- fallback: mantener valor actual si no coincide (no debería ocurrir)
+  ELSE region_id
+END
+WHERE nombre_cientifico IN (
+  'Acer_Capillipes','Acer_Circinatum','Acer_Mono','Acer_Opalus','Acer_Palmatum','Acer_Pictum','Acer_Platanoids','Acer_Rubrum','Acer_Rufinerve','Acer_Saccharinum',
+  'Alnus_Cordata','Alnus_Maximowiczii','Alnus_Rubra','Alnus_Sieboldiana','Alnus_Viridis','Arundinaria_Simonii','Betula_Austrosinensis','Betula_Pendula',
+  'Callicarpa_Bodinieri','Castanea_Sativa','Celtis_Koraiensis','Cercis_Siliquastrum','Cornus_Chinensis','Cornus_Controversa','Cornus_Macrophylla','Cotinus_Coggygria',
+  'Crataegus_Monogyna','Cytisus_Battandieri','Eucalyptus_Glaucescens','Eucalyptus_Neglecta','Eucalyptus_Urnigera','Fagus_Sylvatica','Ginkgo_Biloba',
+  'Ilex_Aquifolium','Ilex_Cornuta','Liquidambar_Styraciflua','Liriodendron_Tulipifera','Lithocarpus_Cleistocarpus','Lithocarpus_Edulis','Magnolia_Heptapeta',
+  'Magnolia_Salicifolia','Morus_Nigra','Olea_Europaea','Phildelphus','Populus_Adenopoda','Populus_Grandidentata','Populus_Nigra','Prunus_Avium','Prunus_X_Shmittii',
+  'Pterocarya_Stenoptera','Quercus_Afares','Quercus_Agrifolia','Quercus_Alnifolia','Quercus_Brantii','Quercus_Canariensis','Quercus_Castaneifolia','Quercus_Cerris',
+  'Quercus_Chrysolepis','Quercus_Coccifera','Quercus_Coccinea','Quercus_Crassifolia','Quercus_Crassipes','Quercus_Dolicholepis','Quercus_Ellipsoidalis','Quercus_Greggii',
+  'Quercus_Hartwissiana','Quercus_Ilex','Quercus_Imbricaria','Quercus_Infectoria_sub','Quercus_Kewensis','Quercus_Nigra','Quercus_Palustris','Quercus_Phellos',
+  'Quercus_Phillyraeoides','Quercus_Pontica','Quercus_Pubescens','Quercus_Pyrenaica','Quercus_Rhysophylla','Quercus_Rubra','Quercus_Semecarpifolia','Quercus_Shumardii',
+  'Quercus_Suber','Quercus_Texana','Quercus_Trojana','Quercus_Variabilis','Quercus_Vulcanica','Quercus_x_Hispanica','Quercus_x_Turneri','Rhododendron_x_Russellianum',
+  'Salix_Fragilis','Salix_Intergra','Sorbus_Aria','Tilia_Oliveri','Tilia_Platyphyllos','Tilia_Tomentosa','Ulmus_Bergmanniana','Viburnum_Tinus','Viburnum_x_Rhytidophylloides',
+  'Zelkova_Serrata'
+);
+
+
+
+UPDATE especie AS e
+JOIN descubrimiento AS d ON
+  ( (d.descubridor = 'Karl Maximovich (Maxim.)' AND d.fecha = '1867-11-13' AND e.nombre_cientifico = 'Acer_Capillipes')
+    OR (d.descubridor = 'Frederick Pursh (Pursh)' AND d.fecha = '1813-01-01' AND e.nombre_cientifico = 'Acer_Circinatum')
+    OR (d.descubridor = 'Karl Maximovich (Maxim.)' AND d.fecha = '1856-01-01' AND e.nombre_cientifico = 'Acer_Mono')
+    OR (d.descubridor = 'Philip Miller (Mill.)' AND d.fecha = '1768-04-16' AND e.nombre_cientifico = 'Acer_Opalus')
+    OR (d.descubridor = 'Carl P. Thunberg (Thunb.)' AND d.fecha = '1784-05-01' AND e.nombre_cientifico = 'Acer_Palmatum')
+    OR (d.descubridor = 'Carl P. Thunberg (Thunb.)' AND d.fecha = '1783-01-01' AND e.nombre_cientifico = 'Acer_Pictum')
+    OR (d.descubridor = 'Carl Linnaeus (L.)' AND d.fecha = '1753-05-01' AND e.nombre_cientifico = 'Acer_Platanoids')
+    OR (d.descubridor = 'Carl Linnaeus (L.)' AND d.fecha = '1753-05-01' AND e.nombre_cientifico = 'Acer_Rubrum')
+    OR (d.descubridor = 'P. F. von Siebold & J. G. Zuccarini (Siebold & Zucc.)' AND d.fecha = '1845-01-01' AND e.nombre_cientifico = 'Acer_Rufinerve')
+    OR (d.descubridor = 'Carl Linnaeus (L.)' AND d.fecha = '1753-05-01' AND e.nombre_cientifico = 'Acer_Saccharinum')
+  )
+SET e.descubrimiento_id = d.id
+WHERE e.nombre_cientifico IN (
+  'Acer_Capillipes','Acer_Circinatum','Acer_Mono','Acer_Opalus','Acer_Palmatum',
+  'Acer_Pictum','Acer_Platanoids','Acer_Rubrum','Acer_Rufinerve','Acer_Saccharinum'
+);
+
+COMMIT;
+
+UPDATE especie AS e
+SET descubrimiento_id = CASE e.nombre_cientifico
+  WHEN 'Alnus_Cordata'           THEN (SELECT id FROM descubrimiento WHERE descubridor='(Loisel.) Duby' LIMIT 1)
+  WHEN 'Alnus_Maximowiczii'      THEN (SELECT id FROM descubrimiento WHERE descubridor='Callier' LIMIT 1)
+  WHEN 'Alnus_Rubra'             THEN (SELECT id FROM descubrimiento WHERE descubridor='Bong.' LIMIT 1)
+  WHEN 'Alnus_Sieboldiana'       THEN (SELECT id FROM descubrimiento WHERE descubridor='Matsum.' LIMIT 1)
+  WHEN 'Alnus_Viridis'           THEN (SELECT id FROM descubrimiento WHERE descubridor='(Chaix) DC.' LIMIT 1)
+  WHEN 'Arundinaria_Simonii'     THEN (SELECT id FROM descubrimiento WHERE descubridor LIKE 'Carrière%Rivière%' LIMIT 1)
+  WHEN 'Betula_Austrosinensis'   THEN (SELECT id FROM descubrimiento WHERE descubridor='Chun ex P.C.Li' LIMIT 1)
+  WHEN 'Betula_Pendula'          THEN (SELECT id FROM descubrimiento WHERE descubridor='Roth' LIMIT 1)
+  WHEN 'Callicarpa_Bodinieri'    THEN (SELECT id FROM descubrimiento WHERE descubridor='H.Lév.' LIMIT 1)
+  WHEN 'Castanea_Sativa'         THEN (SELECT id FROM descubrimiento WHERE descubridor='Mill.' LIMIT 1)
+  ELSE descubrimiento_id
+END
+WHERE e.nombre_cientifico IN (
+  'Alnus_Cordata','Alnus_Maximowiczii','Alnus_Rubra','Alnus_Sieboldiana','Alnus_Viridis',
+  'Arundinaria_Simonii','Betula_Austrosinensis','Betula_Pendula','Callicarpa_Bodinieri','Castanea_Sativa'
+);
+
+COMMIT;
