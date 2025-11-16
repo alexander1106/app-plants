@@ -1,5 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import JSONResponse, HTMLResponse, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import get_connection
@@ -11,13 +11,15 @@ from PIL import Image, ImageOps
 import io
 import os
 import joblib
-import os
+
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "false"
+
 # --- Permitir CORS ---
 origins = [
     "https://app-plants-1.onrender.com"
 ]
+
 # --- CONFIGURACIÓN GLOBAL ---
 MODEL_PATH = "app/models/leaf_classifier_resnet50.keras"
 MAPPING_DATA_PATH = "app/models/train.csv"
@@ -46,11 +48,9 @@ def load_resources():
     # Cargar modelo
     try:
         loaded_model = load_model(MODEL_PATH)
-        # si el modelo es Sequential o Functional, output_shape puede ser (None, n)
         try:
             num_classes = loaded_model.output_shape[1]
         except Exception:
-            # fallback: si no aplica, usar tamaño de salida de la última capa
             num_classes = int(loaded_model.output_shape[-1])
         print(f"Modelo cargado. Clases esperadas: {num_classes}")
     except Exception as e:
@@ -74,33 +74,22 @@ def load_resources():
 # -----------------------
 def prepare_image_from_bytes(image_bytes: bytes, target_size=TARGET_SIZE):
     """
-    Convierte bytes a array listo para predecir:
-    - asegura RGB (3 canales),
-    - corrige EXIF orientation,
-    - redimensiona,
-    - normaliza (/255.0).
+    Convierte bytes a array listo para predecir.
     """
     try:
         img = Image.open(io.BytesIO(image_bytes))
 
-        # Ajustar orientación EXIF
         try:
             img = ImageOps.exif_transpose(img)
         except Exception:
             pass
 
-        # Forzar RGB (quita canal alpha si existe)
         if img.mode != "RGB":
             img = img.convert("RGB")
 
-        # Redimensionar
         img = img.resize(target_size)
-
-        # Convertir a array igual que in notebook
-        arr = image.img_to_array(img)  # H,W,C (C=3)
-        arr = np.expand_dims(arr, axis=0)  # 1,H,W,C
-
-        # Normalizar (AJUSTA si tu entrenamiento usó otra normalización)
+        arr = image.img_to_array(img)
+        arr = np.expand_dims(arr, axis=0)
         arr = arr.astype("float32") / 255.0
 
         return arr
@@ -114,16 +103,19 @@ async def warmup():
         load_resources()
     return {"status": "model loaded"}
 
+# --- Endpoint GET para evitar 405 en /predict ---
+@app.get("/predict")
+async def predict_get_check():
+    return {"status": "ok", "message": "Este endpoint solo acepta POST para predecir."}
 
 # --- Endpoint predict ---
 @app.post("/predict", tags=["Prediction"])
 async def predict_leaf_species(file: UploadFile = File(...)):
-    # Validar MIME type (acepta jpeg y png; png puede contener alpha)
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="El archivo no es una imagen.")
 
     image_bytes = await file.read()
-    # Preprocesar
+
     try:
         processed_input = prepare_image_from_bytes(image_bytes, target_size=TARGET_SIZE)
     except HTTPException:
@@ -131,16 +123,12 @@ async def predict_leaf_species(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error en preprocesamiento: {e}")
 
-    # Predecir
     try:
         preds = loaded_model.predict(processed_input)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al predecir: {e}")
 
-    # Interpretar salida (si tu modelo devuelve logits, aplica softmax)
     try:
-        # si la salida ya es prob. usa directamente; si son logits, descomenta softmax
-        # probs = tf.nn.softmax(preds[0]).numpy()
         probs = preds[0]
         top_idx = int(np.argmax(probs))
         top_prob = float(probs[top_idx])
@@ -148,7 +136,6 @@ async def predict_leaf_species(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al decodificar la predicción: {e}")
 
-    # Respuesta
     return JSONResponse({
         "filename": file.filename,
         "prediction_index": top_idx,
@@ -156,7 +143,7 @@ async def predict_leaf_species(file: UploadFile = File(...)):
         "confidence": round(top_prob, 6)
     })
 
-# --- Endpoint para probar upload desde navegador (evita CORS y file://) ---
+# --- Endpoint para probar upload desde navegador ---
 @app.get("/upload", response_class=HTMLResponse)
 def upload_form():
     return """
@@ -166,25 +153,18 @@ def upload_form():
         <meta charset="utf-8">
         <title>Subir imagen - LR Classifier</title>
       </head>
-
       <body>
         <h3>Subir imagen para clasificación</h3>
-
         <form id="f" enctype="multipart/form-data">
           <input type="file" id="file" name="file" accept="image/*" required>
           <button type="submit">Enviar</button>
         </form>
-
         <h4>Imagen subida:</h4>
         <img id="preview" src="" style="max-width:300px; display:none; border:1px solid #ccc; margin-top:10px;">
-
         <h4>Resultado:</h4>
         <pre id="out"></pre>
-
         <div id="link_detalle"></div>
-
         <script>
-          // Mostrar previsualización
           document.getElementById('file').addEventListener('change', function(e) {
             const file = e.target.files[0];
             const img = document.getElementById('preview');
@@ -192,21 +172,16 @@ def upload_form():
             img.style.display = 'block';
           });
 
-          // Enviar al endpoint /predict
           document.getElementById('f').addEventListener('submit', async (e) => {
             e.preventDefault();
-
             const fd = new FormData();
             fd.append('file', document.getElementById('file').files[0]);
-
             document.getElementById('out').textContent = 'Procesando...';
-
             try {
               const res = await fetch('/predict', { method: 'POST', body: fd });
               const json = await res.json();
               document.getElementById('out').textContent = JSON.stringify(json, null, 2);
 
-              // Crear enlace a especie_detalle
               if (json.species) {
                 const species = encodeURIComponent(json.species);
                 document.getElementById('link_detalle').innerHTML = `
@@ -217,8 +192,6 @@ def upload_form():
                   </a>
                 `;
               }
-
-
             } catch (err) {
               document.getElementById('out').textContent = 'Error: ' + err;
             }
@@ -233,21 +206,22 @@ def upload_form():
 async def health_check():
     return {"status": "ok", "message": "Leaf Classification API está funcionando."}
 
+# --- HEAD para que Render NO cierre el servicio ---
+@app.head("/")
+async def head_root():
+    return Response(status_code=200)
 
-
+# --- Endpoint detalle especie ---
 @app.get("/especie_detalle")
 def especies_detalle(nombre: str):
     conn = get_connection()
     if conn is None:
         raise HTTPException(status_code=500, detail="Error conectando a MySQL.")
-
     cursor = conn.cursor(dictionary=True)
-
     query = """
         SELECT
             e.nombre_cientifico,
             e.nombres_comunes,
-
             CONCAT_WS(' > ',
                 COALESCE(r.nombre_cientifico, ''),
                 COALESCE(d.nombre_cientifico, ''),
@@ -257,29 +231,19 @@ def especies_detalle(nombre: str):
                 COALESCE(g.nombre_cientifico, ''),
                 e.nombre_cientifico
             ) AS taxonomia,
-
-            -- Región vinculada
-            reg.nombre       AS region_nombre,
-            reg.clima        AS region_clima,
-            reg.altitud      AS region_altitud,
-            reg.topografia   AS region_topografia,
-            reg.descripcion  AS region_descripcion,
-
-            -- Descubrimiento
+            reg.nombre AS region_nombre,
+            reg.clima AS region_clima,
+            reg.altitud AS region_altitud,
+            reg.topografia AS region_topografia,
+            reg.descripcion AS region_descripcion,
             disc.descubridor AS descubridor,
-            disc.fecha       AS fecha_descubrimiento,
-
-            -- Cuidados
-            cu.riego         AS cuidados_riego,
-            cu.luz_solar     AS cuidados_luz_solar,
+            disc.fecha AS fecha_descubrimiento,
+            cu.riego AS cuidados_riego,
+            cu.luz_solar AS cuidados_luz_solar,
             cu.temperatura_ideal AS cuidados_temperatura_ideal,
-            cu.poda          AS cuidados_poda,
-            cu.abonado       AS cuidados_abonado,
-
-            -- Usos
+            cu.poda AS cuidados_poda,
+            cu.abonado AS cuidados_abonado,
             GROUP_CONCAT(DISTINCT u.nombre ORDER BY u.nombre SEPARATOR ', ') AS usos,
-
-            -- Propiedades químicas
             GROUP_CONCAT(
                 DISTINCT CONCAT(
                     pq.nombre,
@@ -288,7 +252,6 @@ def especies_detalle(nombre: str):
                 ORDER BY pq.nombre
                 SEPARATOR '; '
             ) AS propiedades_quimicas
-
         FROM especie e
         LEFT JOIN genero g ON e.genero_id = g.id
         LEFT JOIN familia f ON g.familia_id = f.id
@@ -296,43 +259,30 @@ def especies_detalle(nombre: str):
         LEFT JOIN clase c ON o.clase_id = c.id
         LEFT JOIN division d ON c.division_id = d.id
         LEFT JOIN reino r ON d.reino_id = r.id
-
         LEFT JOIN region reg ON e.region_id = reg.id
         LEFT JOIN descubrimiento disc ON e.descubrimiento_id = disc.id
         LEFT JOIN cuidados cu ON e.cuidados_id = cu.id
-
         LEFT JOIN uso_especie ue ON e.id = ue.especie_id
         LEFT JOIN uso u ON ue.uso_id = u.id
-
         LEFT JOIN especie_propiedad_quimica epq ON e.id = epq.especie_id
         LEFT JOIN propiedades_quimicas pq ON epq.propiedad_id = pq.id
-
         WHERE e.nombre_cientifico = %s
-
         GROUP BY e.id;
     """
-
     cursor.execute(query, (nombre,))
     rows = cursor.fetchall()
-
     cursor.close()
     conn.close()
-
     return rows
-
 
 @app.get("/especies")
 def obtener_especies():
     conn = get_connection()
     if conn is None:
         raise HTTPException(status_code=500, detail="Error conectando a MySQL.")
-
     cursor = conn.cursor(dictionary=True)
     cursor.execute("SELECT * FROM especie")
     rows = cursor.fetchall()
-
     cursor.close()
     conn.close()
-
     return rows
-
