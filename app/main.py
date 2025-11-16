@@ -108,9 +108,12 @@ def prepare_image_from_bytes(image_bytes: bytes, target_size=TARGET_SIZE):
         raise HTTPException(status_code=400, detail=f"Error al procesar la imagen: {e}")
 
 # -----------------------
-@app.on_event("startup")
-async def startup_event():
-    load_resources()
+@app.get("/warmup")
+async def warmup():
+    if loaded_model is None:
+        load_resources()
+    return {"status": "model loaded"}
+
 
 # --- Endpoint predict ---
 @app.post("/predict", tags=["Prediction"])
@@ -333,7 +336,3 @@ def obtener_especies():
 
     return rows
 
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run("app.main:app", host="0.0.0.0", port=port)
