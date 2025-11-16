@@ -10,7 +10,6 @@ import pandas as pd
 from PIL import Image, ImageOps
 import io
 import os
-import requests
 import joblib
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
@@ -22,10 +21,9 @@ origins = [
 ]
 
 # --- CONFIGURACIÓN GLOBAL ---
-MODEL_PATH = "app/models/leaf_classifier_resnet50.keras"
-GITHUB_RELEASE_URL = "https://github.com/alexander1106/app-plants/releases/download/v1.0/leaf_classifier_resnet50.keras"
+MODEL_PATH = "app/models/leaf_classifier_resnet50_finetuned.keras"
 MAPPING_DATA_PATH = "app/models/train.csv"
-TARGET_SIZE = (128, 128)
+TARGET_SIZE = (128, 128)   # AJUSTA al tamaño que usaste en el entrenamiento
 
 app = FastAPI(title="Clasificador de Hojas - API")
 
@@ -41,28 +39,13 @@ app.add_middleware(
 loaded_model = None
 labels_map = {}
 num_classes = None
-
-# -----------------------
-def download_model():
-    """Descarga el modelo desde GitHub Releases si no existe localmente."""
-    if not os.path.exists(MODEL_PATH):
-        print("Descargando modelo desde GitHub Release...")
-        os.makedirs(os.path.dirname(MODEL_PATH), exist_ok=True)
-        with requests.get(GITHUB_RELEASE_URL, stream=True) as r:
-            r.raise_for_status()
-            with open(MODEL_PATH, "wb") as f:
-                for chunk in r.iter_content(chunk_size=8192):
-                    f.write(chunk)
-        print("Modelo descargado correctamente.")
-    else:
-        print("Modelo ya existe, no se descarga.")
-
+@app.on_event("startup")
+def startup_event():
+    load_resources()
 # -----------------------
 def load_resources():
     """Carga modelo y mapeo de etiquetas (se ejecuta en startup)."""
     global loaded_model, labels_map, num_classes
-
-    download_model()  # <-- Descarga el modelo si es necesario
 
     # Cargar modelo
     try:
@@ -91,21 +74,26 @@ def load_resources():
         labels_map = {i: f"species_{i+1}" for i in range(num_classes)}
 
 # -----------------------
-@app.on_event("startup")
-def startup_event():
-    load_resources()
-
-# -----------------------
 def prepare_image_from_bytes(image_bytes: bytes, target_size=TARGET_SIZE):
+    """
+    Convierte bytes a array listo para predecir.
+    """
     try:
         img = Image.open(io.BytesIO(image_bytes))
-        img = ImageOps.exif_transpose(img)
+
+        try:
+            img = ImageOps.exif_transpose(img)
+        except Exception:
+            pass
+
         if img.mode != "RGB":
             img = img.convert("RGB")
+
         img = img.resize(target_size)
         arr = image.img_to_array(img)
         arr = np.expand_dims(arr, axis=0)
         arr = arr.astype("float32") / 255.0
+
         return arr
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error al procesar la imagen: {e}")
@@ -117,21 +105,39 @@ async def warmup():
         load_resources()
     return {"status": "model loaded"}
 
+# --- Endpoint GET para evitar 405 en /predict ---
 @app.get("/predict")
 async def predict_get_check():
     return {"status": "ok", "message": "Este endpoint solo acepta POST para predecir."}
 
+# --- Endpoint predict ---
 @app.post("/predict", tags=["Prediction"])
 async def predict_leaf_species(file: UploadFile = File(...)):
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="El archivo no es una imagen.")
+
     image_bytes = await file.read()
-    processed_input = prepare_image_from_bytes(image_bytes, target_size=TARGET_SIZE)
-    preds = loaded_model.predict(processed_input)
-    probs = preds[0]
-    top_idx = int(np.argmax(probs))
-    top_prob = float(probs[top_idx])
-    predicted_label = labels_map.get(top_idx, f"label_{top_idx}")
+
+    try:
+        processed_input = prepare_image_from_bytes(image_bytes, target_size=TARGET_SIZE)
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error en preprocesamiento: {e}")
+
+    try:
+        preds = loaded_model.predict(processed_input)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al predecir: {e}")
+
+    try:
+        probs = preds[0]
+        top_idx = int(np.argmax(probs))
+        top_prob = float(probs[top_idx])
+        predicted_label = labels_map.get(top_idx, f"label_{top_idx}")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al decodificar la predicción: {e}")
+
     return JSONResponse({
         "filename": file.filename,
         "prediction_index": top_idx,
