@@ -39,7 +39,9 @@ app.add_middleware(
 loaded_model = None
 labels_map = {}
 num_classes = None
-
+@app.on_event("startup")
+def startup_event():
+    load_resources()
 # -----------------------
 def load_resources():
     """Carga modelo y mapeo de etiquetas (se ejecuta en startup)."""
